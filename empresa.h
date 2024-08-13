@@ -12,6 +12,8 @@ struct empresa{
 };
 typedef struct empresa Empresa;
 
+void completar_cnpj(int cnpj, char *cnpjstr);
+
 Empresa *criar_empresa(char *str);
 
 void mostrar_empresa(Empresa *emp);
