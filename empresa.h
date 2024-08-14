@@ -3,12 +3,12 @@
 
 struct empresa{
 	int cnpj;
-	char nome[200];
-	int natjur;
-	int qual;
+	char nome[180];
+	short natjur;
+	short qual;
 	float cap;
-	int porte;
-	int fed;
+	short porte;
+	short fed;
 };
 typedef struct empresa Empresa;
 

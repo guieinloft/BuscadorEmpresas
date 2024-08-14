@@ -27,6 +27,14 @@ void ordena_nomes(Nome *nomes, int tam){
 	qsort(nomes, tam, sizeof(Nome), compara_nomes);
 }
 
+int compara_cnpj(const void *a, const void *b){
+	return ((Nome*)b)->emp->cnpj - ((Nome*)a)->emp->cnpj;
+}
+
+void ordena_cnpj(Nome *nomes, int tam){
+	qsort(nomes, tam, sizeof(Nome), compara_cnpj);
+}
+
 Empresa *busca_nome(char *str, Nome *nomes, int tam){
 	str = strupr(str);
 	int h = tam-1;
@@ -36,6 +44,21 @@ Empresa *busca_nome(char *str, Nome *nomes, int tam){
 	while(l <= h){
 		m = l + (h-l)/2;
 		cmp = substrcmp(str, nomes[m].emp->nome);
+		if(cmp == 0) return nomes[m].emp;
+		else if(cmp > 0) l = m+1;
+		else if(cmp < 0) h = m-1;
+	}
+	return NULL;
+}
+
+Empresa *busca_cnpj(int cnpjs, Nome *nomes, int tam){
+	int h = tam-1;
+	int l = 0;
+	int m;
+	int cmp;
+	while(l <= h){
+		m = l + (h-l)/2;
+		cmp = nomes[m].emp->cnpj - cnpjs;
 		if(cmp == 0) return nomes[m].emp;
 		else if(cmp > 0) l = m+1;
 		else if(cmp < 0) h = m-1;

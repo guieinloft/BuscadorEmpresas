@@ -2,17 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
+#include <stdbool.h>
 #include "empresa.h"
-#include "hash.h"
 #include "nome.h"
 
-int menu_cnpj(Hash *hash){
+int menu_cnpj(Nome *nomes, int tam){
 	int cnpj;
 	printf("\nDigite os 8 primeiros digitos do CNPJ\n(-1 para sair): ");
 	scanf("%d", &cnpj);
 	if(cnpj == -1) return -1;
-	if(hash[cnpj].emp != NULL) mostrar_empresa(hash[cnpj].emp);
-	else printf("CNPJ nao encontrado.\n");
+	Empresa *emp_busca = busca_cnpj(cnpj, nomes, tam);
+	if(emp_busca != NULL) mostrar_empresa(emp_busca);
+	else printf("Empresa nao encontrada.\n");
 	return 0;
 }
 
@@ -35,34 +36,36 @@ int menu_principal(){
 	return op;
 }
 
-int main(){
+int main(int argc, char *argv[]){
 	setlocale(LC_ALL, "Portuguese");
 	FILE *csv = fopen("./Empresas0.csv", "r");
 
+	Nome *nomes;
+
 	printf("Criando matriz...\n");
-       	Hash *hash = criar_tabela();
-	Nome *nomes = criar_tabnomes();
+	nomes = criar_tabnomes();
 	int tam = 0, op, op2, i;
 	Empresa *emp;
 	char str[256];
 	printf("Carregando arquivo (pode demorar alguns minutos)...\n");
 	while(fgets(str, 256, csv)){
 		emp = criar_empresa(str);
-		inserir_tab(emp, hash);
 		tam = inserir_nome(emp, nomes, tam);
 	}
-	ordena_nomes(nomes, tam);
+	
 	printf("Arquivo carregado.\n");
 	
 	do{
 		op = menu_principal();
 		switch(op){
 			case 1:
+				ordena_cnpj(nomes, tam);
 				do{
-					op2 = menu_cnpj(hash);
+					op2 = menu_cnpj(nomes, tam);
 				} while(op2 != -1);
 				break;
 			case 2:
+				ordena_nomes(nomes, tam);
 				do{
 					op2 = menu_nome(nomes, tam);
 				} while(op2 != -1);
@@ -74,10 +77,7 @@ int main(){
 
 	printf("\nEncerrando...\n");
 	fclose(csv);
-	free(hash);
-	for(i = 0; i < tam; i++){
-		free(nomes[i].emp);
-	}
+	for(i = 0; i < tam; i++) free(nomes[i].emp);
 	free(nomes);
 
 	return 0;
